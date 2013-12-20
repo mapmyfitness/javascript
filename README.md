@@ -131,7 +131,7 @@
     var items = [];
     ```
 
-  - If you don't know array length use Array#push.
+  - Use Array#push rather than Array#length to add to arrays.
 
     ```javascript
     var someStack = [];
@@ -267,19 +267,21 @@
   - Function expressions:
 
     ```javascript
-    // anonymous function expression
-    var anonymous = function() {
-      return true;
+    // named function expression
+    // preferred
+    var named = function () {
+        return true;
     };
 
-    // named function expression
-    var named = function named() {
-      return true;
-    };
+    // named function declaration - note: no space between fn name and open parens
+    // acceptable
+    function named() {
+        return true;
+    }
 
     // immediately-invoked function expression (IIFE)
-    (function() {
-      console.log('Welcome to the Internet. Please follow me.');
+    (function () {
+        console.log('Welcome to the Internet. Please follow me.');
     })();
     ```
 
@@ -317,8 +319,29 @@
     }
     ```
 
-    **[[⬆]](#TOC)**
+  - Never define a function inside of a loop.
 
+    ```javascript
+    // bad
+    while (foo) {
+        var bar = function () {
+            // ...stuff...
+        };
+        // ...stuff...
+        bar()
+    }
+    
+
+    // good
+    var bar = function () {
+        // ...stuff...
+    };
+    while (foo) {
+        bar();
+    }
+    ```
+
+    **[[⬆]](#TOC)**
 
 
 ## <a name='properties'>Properties</a>
@@ -368,18 +391,22 @@
     var superPower = new SuperPower();
     ```
 
-  - Use one `var` declaration for multiple variables and declare each variable on a newline.
+  - It is preferred to use one `var` declaration for multiple variables and declare each variable on a newline.
 
     ```javascript
-    // bad
-    var items = getItems();
-    var goSportsTeam = true;
-    var dragonball = 'z';
-
-    // good
+    // preferred
     var items = getItems(),
         goSportsTeam = true,
         dragonball = 'z';
+    ```
+
+  - It is also acceptable to use multiple var statements as needed.
+
+    ```javascript
+    // acceptable
+    var items = getItems();
+    var goSportsTeam = true;
+    var dragonball = 'z';
     ```
 
   - Declare unassigned variables last. This is helpful when later on you might need to assign a variable depending on one of the previous assigned variables.
@@ -605,14 +632,14 @@
 
 ## <a name='blocks'>Blocks</a>
 
-  - Use braces with all multi-line blocks.
+  - Use braces with all blocks.
 
     ```javascript
     // bad
     if (test)
       return false;
 
-    // good
+    // bad
     if (test) return false;
 
     // good
@@ -641,7 +668,7 @@
     // make() returns a new element
     // based on the passed in tag name
     //
-    // @param <String> tag
+    // @param <String> tag Useful description of param
     // @return <Element> element
     function make(tag) {
 
@@ -655,7 +682,7 @@
      * make() returns a new element
      * based on the passed in tag name
      *
-     * @param <String> tag
+     * @param <String> tag Useful description of param
      * @return <Element> element
      */
     function make(tag) {
@@ -696,26 +723,26 @@
     }
     ```
 
-  - Prefixing your comments with `FIXME` or `TODO` helps other developers quickly understand if you're pointing out a problem that needs to be revisited, or if you're suggesting a solution to the problem that needs to be implemented. These are different than regular comments because they are actionable. The actions are `FIXME -- need to figure this out` or `TODO -- need to implement`.
+  - Prefixing your comments with `@FIXME` or `@TODO` helps other developers quickly understand if you're pointing out a problem that needs to be revisited, or if you're suggesting a solution to the problem that needs to be implemented. These are different than regular comments because they are actionable. The actions are `FIXME -- need to figure this out` or `TODO -- need to implement`.
 
-  - Use `// FIXME:` to annotate problems
+  - Use `// @FIXME:` to annotate problems
 
     ```javascript
     function Calculator() {
 
-      // FIXME: shouldn't use a global here
+      // @FIXME: shouldn't use a global here
       total = 0;
 
       return this;
     }
     ```
 
-  - Use `// TODO:` to annotate solutions to problems
+  - Use `// @TODO:` to annotate solutions to problems
 
     ```javascript
     function Calculator() {
 
-      // TODO: total should be configurable by an options param
+      // @TODO: total should be configurable by an options param
       this.total = 0;
 
       return this;
@@ -787,7 +814,7 @@
 
     ```
 
-  - Use indentation when making long method chains.
+  - Use line breaks and indentation when making long method chains.
 
     ```javascript
     // bad
@@ -909,6 +936,23 @@
 
     **[[⬆]](#TOC)**
 
+## <a name='leading_operators'>Leading operators</a>
+
+  - **Nope.**
+
+    ```javascript
+    // bad
+    var message = "Breaking [lines]"
+        + "bad.";
+
+    // good
+    var message = "That's the way (uh huh, uh huh)" +
+        "I like it.";    
+
+    ```
+
+    **[[⬆]](#TOC)**
+
 
 ## <a name='type-coercion'>Type Casting & Coercion</a>
 
@@ -978,7 +1022,7 @@
     // good
     var hasAge = Boolean(age);
 
-    // good
+    // best ([jsPerf](http://jsperf.com/jquery-find-vs-context-sel/16) http://jsperf.com/bool-vs-doublenot)
     var hasAge = !!age;
     ```
 
@@ -1001,44 +1045,44 @@
     }
     ```
 
-  - Use camelCase when naming objects, functions, and instances
+  - Use camelCase when naming functions
 
     ```javascript
     // bad
-    var OBJEcttsssss = {};
-    var this_is_my_object = {};
-    var this-is-my-object = {};
-    function c() {};
-    var u = new user({
-      name: 'Bob Parr'
-    });
+    function crap_kwood_says() {};
 
     // good
-    var thisIsMyObject = {};
-    function thisIsMyFunction() {};
-    var user = new User({
-      name: 'Bob Parr'
-    });
+    function crapKwoodSays() {};
+    ```
+
+  - Use lowercase + underscores when naming everything else
+
+    ```javascript
+    // bad
+    var Nooooooooooooooo = {};
+    var thisismyobject = {};
+    var this-is-my-object = {};
+    var chickenOfTheSea = true;
+
+    // good
+    var nooooooooooooooo = {};
+    var this_is_my_object = {};
+    var chicken_of_the_sea = true;
     ```
 
   - Use PascalCase when naming constructors or classes
 
     ```javascript
     // bad
-    function user(options) {
-      this.name = options.name;
-    }
-
-    var bad = new user({
+    var bad = new awesome_user({
+      name: 'nope'
+    });
+    var also_bad = new aquaMan({
       name: 'nope'
     });
 
     // good
-    function User(options) {
-      this.name = options.name;
-    }
-
-    var good = new User({
+    var good = new AquaMan({
       name: 'yup'
     });
     ```
@@ -1082,19 +1126,15 @@
     }
     ```
 
-  - Name your functions. This is helpful for stack traces.
+  - Alternatively, set the context of your function using _.bind or $.proxy
 
     ```javascript
-    // bad
-    var log = function(msg) {
-      console.log(msg);
-    };
-
-    // good
-    var log = function log(msg) {
-      console.log(msg);
-    };
-    ```
+    function() {
+      return _.bind(function() {
+        console.log(self);
+      }, this);
+    }
+    ```  
 
     **[[⬆]](#TOC)**
 
@@ -1267,37 +1307,6 @@
     ```
 
   **[[⬆]](#TOC)**
-
-
-## <a name='modules'>Modules</a>
-
-  - The module should start with a `!`. This ensures that if a malformed module forgets to include a final semicolon there aren't errors in production when the scripts get concatenated. [Explanation](https://github.com/airbnb/javascript/issues/44#issuecomment-13063933)
-  - The file should be named with camelCase, live in a folder with the same name, and match the name of the single export.
-  - Add a method called noConflict() that sets the exported module to the previous version and returns this one.
-  - Always declare `'use strict';` at the top of the module.
-
-    ```javascript
-    // fancyInput/fancyInput.js
-
-    !function(global) {
-      'use strict';
-
-      var previousFancyInput = global.FancyInput;
-
-      function FancyInput(options) {
-        this.options = options || {};
-      }
-
-      FancyInput.noConflict = function noConflict() {
-        global.FancyInput = previousFancyInput;
-        return FancyInput;
-      };
-
-      global.FancyInput = FancyInput;
-    }(this);
-    ```
-
-    **[[⬆]](#TOC)**
 
 
 ## <a name='jquery'>jQuery</a>
